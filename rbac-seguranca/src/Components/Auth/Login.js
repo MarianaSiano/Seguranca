@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useHistory } from 'react-router-dom';
+import './Login.css';
 
 const Login = () => {
     const [username, setUsername] = useState('');
