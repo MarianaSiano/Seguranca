@@ -24,7 +24,7 @@ const Navbar = () => {
             { isAuthenticated() && (
                 <div className='navbar-links'>
                     {/* Links com base no papel do usuário */}
-                    {User.role === 'diretoria' && (
+                    {usuario.role === 'diretoria' && (
                         <>
                             <Link to='/diretoria' className='nav-link'>Painel Diretoria</Link>
                             <Link to='/gerenciar-professores' className='nav-link'>Professores</Link>
@@ -32,7 +32,7 @@ const Navbar = () => {
                         </>
                     )}
 
-                    {user.role === 'professor' && (
+                    {usuario.role === 'professor' && (
                         <>
                             <Link to='/professor' className='nav-link'>Painel Professor</Link>
                             <Link to='/minhas-turmas' className='nav-link'>Minhas Turmas</Link>
@@ -40,7 +40,7 @@ const Navbar = () => {
                         </>
                     )}
 
-                    {user.role === 'aluno' && (
+                    {usuario.role === 'aluno' && (
                         <>
                             <Link to='/aluno' className='nav-link'>Painel Aluno</Link>
                             <Link to='/minhas-notas' className='nav-link'>Minhas Notas</Link>
