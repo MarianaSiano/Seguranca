@@ -7,7 +7,7 @@ const BoardPanel = () => {
     return (
         <div className='panel'>
             <h2>Painel da Diretoria</h2>
-            <p>Bem-Vindo(a), {usuario?.nome}!</p>
+            <p>Bem Vindo(a), {usuario?.nome}!</p>
             
             <div className='recursos'>
                 <button>Gerenciar Professores</button>
