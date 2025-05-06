@@ -7,9 +7,9 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
 
-    const login = async (usermame, password) => {
+    const login = async (email, password) => {
         try {
-            const userData = await apiLogin(username, password);
+            const userData = await apiLogin(email, password);
             setUser(userData);
             return userData;
         } catch(error){

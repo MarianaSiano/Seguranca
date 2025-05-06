@@ -2,27 +2,30 @@
 const users = [
     {
         id: 1,
-        name: 'admin',
-        password: 'admin123',
-        roles: ['admin']
+        name: 'Diretor',
+        email: 'diretoria@escola.com',
+        password: 'diretoria@admin123',
+        roles: ['diretoria']
     },
     {
         id: 2,
-        name: 'editor',
-        password: 'editor123',
-        roles: ['editor']
+        name: 'Professor',
+        email: 'professorX@escola.com',
+        password: 'professorX@123',
+        roles: ['professor']
     },
     {
         id: 3,
-        name: 'viewer',
-        password: 'viewer123',
-        roles: ['viewer']
+        name: 'Aluno',
+        email: 'alunoX@escola.com',
+        password: 'alunoX@123',
+        roles: ['aluno']
     }
 ];
 
 //Função de login simulada
-export const login = async (username, password) => {
-    const user = users.find(user1 => user1.username === username && user1.password === password);
+export const login = async (email, password) => {
+    const user = users.find(user1 => user1.email === email && user1.password === password);
 
     if(!user) {
         throw new Error('Usuário ou senha inválidos');
