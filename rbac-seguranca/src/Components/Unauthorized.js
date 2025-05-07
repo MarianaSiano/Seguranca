@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { userAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/AuthContext';
 
 const Unauthorized = () => {
-    const { usuario } = userAuth();
+    const { usuario } = useAuth();
 
     return (
         <div className='unauthorized-container'>
