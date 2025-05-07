@@ -17,10 +17,25 @@ const Login = () => {
         setLoading(true);
 
         try {
-            await login(email, password);
-            navigate('/');
+            const user = await login(email, password);
+
+            //Redireciona com base no papel (role) do usuário
+            switch (user.roles[0]) { //Assumindo que roles é um array
+                case 'diretoria':
+                    navigate('/diretoria');
+                    break;
+                case 'professor':
+                    navigate('/professor');
+                    break;
+                case 'aluno':
+                    navigate('/aluno');
+                    break;
+                default:
+                    navigate('/');
+            }
+
         } catch (err) {
-            setError(err.message); // Mostra a mensagem de erro completa
+            setError(err.message);
             setLoading(false);
         }
     };
@@ -28,53 +43,34 @@ const Login = () => {
     return (
         <div className="login-container">
             <div className="login-card">
-                <h2 className="login-title">Acesso ao Sistema</h2>
-                {error && (
-                    <div className="alert-danger">
-                        {error.includes('inválidos') ? (
-                            <>
-                                <strong>Credenciais incorretas!</strong><br />
-                                Tente: diretor@escola.com/diretor123
-                            </>
-                        ) : (
-                            error
-                        )}
-                    </div>
-                )}
+                <h2 className="login-title">Login</h2>
+                {error && <div className="alert-danger">{error}</div>}
 
                 <form onSubmit={handleSubmit} className="login-form">
                     <div className="form-group">
-                        <label htmlFor="email">E-mail</label>
+                        <label>E-mail:</label>
                         <input
                             type="email"
-                            id="email"
-                            className="form-control"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
-                            placeholder="ex: diretor@escola.com"
+                            placeholder="seu_email@escola.com"
                         />
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="password">Senha</label>
+                        <label>Senha:</label>
                         <input
                             type="password"
-                            id="password"
-                            className="form-control"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
-                            placeholder="ex: diretor123"
+                            placeholder="senha"
                         />
                     </div>
 
-                    <button
-                        type="submit"
-                        className="btn-login"
-                        disabled={loading}
-                    >
-                        {loading ? 'Verificando...' : 'Entrar'}
+                    <button type="submit" disabled={loading}>
+                        {loading ? 'Entrando...' : 'Entrar'}
                     </button>
                 </form>
             </div>

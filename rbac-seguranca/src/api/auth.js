@@ -23,22 +23,30 @@ const users = [
     }
 ];
 
-//Função de login simulada
 export const login = async (email, password) => {
-    // Encontra o usuário com email correspondente
-    const user = users.find(u => u.email === email);
+    return new Promise((resolve, reject) => {
+        //Simula delay de rede
+        setTimeout(() => {
+            const user = users.find(u => u.email === email && u.password === password);
 
-    //Verifica se usuário existe e se a senha está correta
-    if (!user || user.password !== password) {
-        throw new Error('Usuário ou senha inválidos');
-    }
-
-    //Retorna os dados do usuário sem a senha
-    const { password: _, ...userData } = user;
-    return userData;
+            if(user) {
+                resolve({
+                    id: user.id,
+                    email: user.email,
+                    name: user.name,
+                    roles: user.roles
+                });
+            } else {
+                reject(new Error('Credenciais inválidas'));
+            }
+        }, 500); //0.5s delay para simular chamada API
+    });
 };
 
 export const logout = async () => {
-    //Limpeza de sessão pode ser feita aqui
-    return true;
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve(true);
+        }, 200);
+    });
 };
