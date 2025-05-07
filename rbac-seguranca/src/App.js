@@ -1,5 +1,5 @@
 import React from 'react'
-import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './Components/UI/ProtectedRoute';
 import Login from './Components/Auth/Login';
@@ -14,38 +14,42 @@ function App() {
     return (
         <Router>
             <AuthProvider>
-                <div className='App'>
-                    <Navbar />
-                    <Switch>
-                        <Route path='/login' component={Login} />
-                        <Route path='/nao-autorizado' component={Unauthorizad} />
+                <Navbar />
+                <Routes>
+                    <Route path='/login' element={<Login />} /> {/* Rota Pública */}
+                    <Route path='/nao-autorizado' element={<Unauthorizad />} /> {/* Rota de Erro */}
 
-                        <ProtectedRoute 
-                        path='/diretoria'
-                        component={BoardPanel}
-                        permissao='gerenciar_usuarios'
-                        />
+                    {/* Rotas Protegidas */}
+                    <Route path='/diretoria' 
+                    element={
+                        <ProtectedRoute permission='gerenciar_usuarios'>
+                            <BoardPanel />
+                        </ProtectedRoute>
+                    }/>
 
-                        <ProtectedRoute 
-                        path='/professor'
-                        component={TeachersPanel}
-                        permissao='lancar_notas'
-                        />
+                    <Route path='/professor' 
+                    element={
+                        <ProtectedRoute permission='lancar_notas'>
+                            <TeachersPanel />
+                        </ProtectedRoute>
+                    }/>
 
-                        <ProtectedRoute 
-                        path='/aluno'
-                        component={StudentPanel}
-                        permissao='visualizar_notas'
-                        />
+                    <Route path='/aluno' 
+                    element={
+                        <ProtectedRoute permission='visualizar_notas'>
+                            <StudentPanel />
+                        </ProtectedRoute>
+                    }/>
 
-                        <Route exact path='/'>
-                            <Redirect to='/login' />
-                        </Route>
-                    </Switch>
-                </div>
+                    {/* Rota padrão redireciona para login */}
+                    <Route path='/' element={<Navigate to='/login' replace />} />
+
+                    {/* Rota para págimas não encontradas */}
+                    <Route path='*' element={<Navigate to='nao-encontrado' replace />} />
+                </Routes>
             </AuthProvider>
         </Router>
     );
-};
+}
 
 export default App;
