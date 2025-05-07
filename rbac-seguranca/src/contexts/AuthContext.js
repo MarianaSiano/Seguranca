@@ -1,4 +1,4 @@
-import React, { createContext, userState, useContext } from 'react';
+import React, { createContext, useState, useContext } from 'react';  // Corrigido de userState para useState
 import { login as apiLogin, logout as apiLogout } from '../api/auth';
 import { hasPermission } from '../api/rbac';
 
@@ -12,13 +12,13 @@ export const AuthProvider = ({ children }) => {
             const userData = await apiLogin(email, password);
             setUser(userData);
             return userData;
-        } catch(error){
+        } catch(error) {
             throw error;
         }
     };
 
     const logout = async () => {
-        await apiLogin();
+        await apiLogout();  //Corrigido de apiLogin para apiLogout
         setUser(null);
     };
 
@@ -34,9 +34,10 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-    <AuthContext.Provider value={{ user, login, logout, isAuthenticated, can }}>
-        {children}
-    </AuthContext.Provider>);
+        <AuthContext.Provider value={{ user, login, logout, isAuthenticated, can }}>
+            {children}
+        </AuthContext.Provider>
+    );
 };
 
 export const useAuth = () => {
