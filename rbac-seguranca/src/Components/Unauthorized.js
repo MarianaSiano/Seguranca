@@ -22,8 +22,8 @@ const Unauthorized = () => {
 
                 <div className='action-buttons'>
                     {usuario ? (
-                        <Link to={usuario.papel === 'diretoria' ? '/diretoria' :
-                            usuario.papel === 'professor' ? '/professor' : '/aluno'}
+                        <Link to={usuario.role === 'diretoria' ? '/diretoria' :
+                            usuario.role === 'professor' ? '/professor' : '/aluno'}
                             className="btn btn-primary">
                             Voltar ao seu painel
                         </Link>
