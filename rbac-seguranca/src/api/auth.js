@@ -10,14 +10,14 @@ const users = [
     {
         id: 2,
         name: 'Professor',
-        email: 'professorX@escola.com',
-        password: 'professorX@123',
+        email: 'professor@escola.com',
+        password: 'professor@123',
         roles: ['professor']
     },
     {
         id: 3,
         name: 'Aluno',
-        email: 'alunoX@escola.com',
+        email: 'aluno@escola.com',
         password: 'alunoX@123',
         roles: ['aluno']
     }
@@ -25,21 +25,20 @@ const users = [
 
 //Função de login simulada
 export const login = async (email, password) => {
-    const user = users.find(user1 => user1.email === email && user1.password === password);
+    // Encontra o usuário com email correspondente
+    const user = users.find(u => u.email === email);
 
-    if(!user) {
+    //Verifica se usuário existe e se a senha está correta
+    if (!user || user.password !== password) {
         throw new Error('Usuário ou senha inválidos');
     }
 
-    return {
-        id: user.id,
-        name: user.name,
-        roles: user.roles,
-        token: 'simulated-token-' + user.id //Token simulado
-    };
+    //Retorna os dados do usuário sem a senha
+    const { password: _, ...userData } = user;
+    return userData;
 };
 
-//Função de logout simulada
 export const logout = async () => {
-    return true; //Simula o logout
-}
+    //Limpeza de sessão pode ser feita aqui
+    return true;
+};
