@@ -1,0 +1,115 @@
+.panel {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    padding: 2.5rem;
+    width: 90%;
+    max-width: 800px;
+    margin: 2rem auto;
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.panel h2 {
+    color: var(--dark-color);
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-size: 2rem;
+    font-weight: 700;
+    position: relative;
+}
+
+.panel h2::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 4px;
+    background: var(--accent-color);
+    margin: 0.8rem auto 1.5rem;
+    border-radius: 2px;
+}
+
+.panel p {
+    text-align: center;
+    color: var(--dark-color);
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+}
+
+.recursos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.teachers-panel .recursos button {
+    background: linear-gradient(135deg, #4895ef, #4361ee);
+}
+
+.teachers-panel .recursos button:nth-child(2) {
+    background: linear-gradient(135deg, #f72585, #b5179e);
+}
+
+.teachers-panel .recursos button:nth-child(3) {
+    background: linear-gradient(135deg, #7209b7, #560bad);
+}
+
+.teachers-panel .recursos button:nth-child(4) {
+    background: linear-gradient(135deg, #4cc9f0, #3a86ff);
+}
+
+/* Efeitos e animações */
+.recursos button {
+    position: relative;
+    overflow: hidden;
+}
+
+.recursos button::after {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: rgba(255, 255, 255, 0.1);
+    transform: rotate(30deg);
+    transition: all 0.3s;
+}
+
+.recursos button:hover::after {
+    left: 100%;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .recursos {
+        grid-template-columns: 1fr;
+    }
+    
+    .panel {
+        padding: 1.5rem;
+        width: 95%;
+    }
+    
+    .panel h2 {
+        font-size: 1.8rem;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    .panel {
+        background: rgba(33, 37, 41, 0.9);
+        color: white;
+    }
+    
+    .panel h2, .panel p {
+        color: white;
+    }
+    
+    .recursos button {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+}
