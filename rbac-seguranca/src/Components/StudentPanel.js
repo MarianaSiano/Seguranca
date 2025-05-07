@@ -1,4 +1,5 @@
 import React from 'react';
+import Navbar from './UI/Navbar';
 import { useAuth } from '../contexts/AuthContext';
 import './StudentPanel.css';
 
@@ -7,6 +8,7 @@ const StudentPanel = () => {
 
     return (
         <div className="panel">
+            <Navbar />
             <h2>Painel do Aluno</h2>
             <p>Bem-vindo(a), {usuario?.nome}!</p>
             <div className="recursos">
