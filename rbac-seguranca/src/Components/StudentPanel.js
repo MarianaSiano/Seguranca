@@ -1,5 +1,6 @@
 import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import './StudentPanel.css';
 
 const StudentPanel = () => {
     const { usuario } = useAuth();
