@@ -1,5 +1,7 @@
+const readline = require('readline');
+
 function cifraCesar(texto, k) {
-    //Garante que o deslocamento esteja entre 1 e 25
+//Garante que o deslocamento esteja entre 1 e 25
     if (k < 1 || k > 25)
         throw new Error("O deslocamento (k) deve estar entre 1 e 25");
 
@@ -26,7 +28,23 @@ function cifraCesar(texto, k) {
     return resultado;
 }
 
-let mensagem = 'Seguranca da Informacao';
-let chave = 3;
+const r1 = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
 
-console.log(cifraCesar(mensagem, chave));
+//Pergunta a mensagem e a chave para o usuario
+r1.question('Digite a mensagem => ', function(mensagem) {
+    r1.question('Digite o valor da chave (1 a 25) => ', function(chaveStr) {
+        const chave = parseInt(chaveStr);
+
+        if(isNaN(chave) || chave < 1 || chave > 25)
+            console.log('Chave invalida. Use um numero entre 1 e 25');
+        else {
+            const criptografada = cifraCesar(mensagem, chave);
+            console.log('Mensagem criptografada => ', criptografada);
+        }
+
+        r1.close();
+    })
+})
