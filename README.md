@@ -1,5 +1,6 @@
 # Seguranca
-Repositório para atividades da disciplina Segurança em Sistemas de Computação
+Repositório para atividades da disciplina Segurança em Sistemas de Computação. <br>
+Siga as intruções neste documento, pois é o mesmo repositorio para todas as atividades
 
 # Rodar o programa - RBAC
 * Para rodar o programa, tem que estar na pasta `rbac-seguranca`, caso não esteja nela, abra o terminal e digite o seguinte comando: <br>
