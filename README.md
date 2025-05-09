@@ -2,7 +2,7 @@
 Repositório para atividades da disciplina Segurança em Sistemas de Computação
 
 # Rodar o programa - RBAC
-* Para rodar o programa, tem que estar na pasta `rbac-seguranca`, caso não esteja nela, digite o seguinte comando: <br>
+* Para rodar o programa, tem que estar na pasta `rbac-seguranca`, caso não esteja nela, abra o terminal e digite o seguinte comando: <br>
 `cd rbac-seguranca` <br>
 <br>
 
@@ -15,3 +15,14 @@ Repositório para atividades da disciplina Segurança em Sistemas de Computaçã
 
 * Login e senha de cada papel está em: <br>
 `src\api\auth.js`
+<br>
+
+# Cifra de Cesar
+* Para rodar o programa, tem que estar na pasta `cifra-cesar`, caso não esteja nela, abra o terminal e digite o seguinte comando: <br>
+`cd cifra-cesar` <br>
+
+* Após isso, no terminal, digite o seguinte comando: <br>
+`node cifraCesar.js` <br>
+<br>
+
+* No próprio terminal, terá que digitar a mensagem e a chave que deseja criptografar
