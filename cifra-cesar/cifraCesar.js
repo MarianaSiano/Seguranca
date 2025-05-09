@@ -31,7 +31,7 @@ function cifraCesar(texto, k) {
 
 function descriptografarCesar(texto, k)
 {
-    let resultado = '';
+    let resultado = "";
 
     for(let i = 0; i < texto.length; i++) {
         let char = texto[i];
@@ -54,28 +54,6 @@ function descriptografarCesar(texto, k)
 }
 
 //Atividade 2
-function decifraCesar(texto, k)
-{
-    let resultado = "";
-
-    for(let i = 0; i < texto.length; i++) {
-        if(char >= 'a' && char <= '\z') {
-            let codigo = ((char.charCodeAt(0) - 97 - k + 26) % 26) + 97;
-            resultado += String.fromCharCode(codigo);
-        }
-
-        else if(char >= 'A' && char <= 'Z') {
-            let codigo = ((char.charCodeAt(0) - 65 - k + 26) % 26) + 65;
-            resultado += String.fromCharCode(codigo);
-        }
-
-        else
-            resultado += char;
-    }
-
-    return resultado;
-}
-
 function contarFrequencia(texto)
 {
     const freq = {};
@@ -112,7 +90,7 @@ function criptonaliseCesar(texto)
 
     //Presumindo que a letra mais frequente na cifra representa o 'A'
     const deslocamento = (letraMaisFrequente.charCodeAt(0) - 'A'.charCodeAt(0) + 26) % 26;
-    const textoDecifrado = decifraCesar(texto, deslocamento);
+    const textoDecifrado = descriptografarCesar(texto, deslocamento);
 
     return {
         letraMaisFrequente,
