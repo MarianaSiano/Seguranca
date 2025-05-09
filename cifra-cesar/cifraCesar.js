@@ -33,18 +33,55 @@ const r1 = readline.createInterface({
     output: process.stdout
 });
 
-//Pergunta a mensagem e a chave para o usuario
-r1.question('Digite a mensagem => ', function(mensagem) {
-    r1.question('Digite o valor da chave (1 a 25) => ', function(chaveStr) {
-        const chave = parseInt(chaveStr);
+function descriptografarCesar(texto, k)
+{
+    let resultado = '';
 
-        if(isNaN(chave) || chave < 1 || chave > 25)
-            console.log('Chave invalida. Use um numero entre 1 e 25');
-        else {
-            const criptografada = cifraCesar(mensagem, chave);
-            console.log('Mensagem criptografada => ', criptografada);
+    for(let i = 0; i < texto.length; i++) {
+        let char = texto[i];
+
+        if(char >= 'a' && char <= 'z') {
+            let codigo = ((char.charCodeAt(0) - 97 - k + 26) % 26) + 97;
+            resultado += String.fromCharCode(codigo);
         }
 
-        r1.close();
-    })
-})
+        else if(char > 'A' && char <= 'Z') {
+            let codigo = ((char.charCodeAt(0) - 65 - k + 26) % 26) + 65;
+            resultado += String.fromCharCode(codigo);
+        }
+
+        else
+            resultado += char;
+    }
+
+    return resultado;
+}
+
+r1.question('Você quer (1) Criptografar ou (2) Descriptografar? ', function(operacao) {
+    r1.question('Digite a mensagem => ', function(mensagem) {
+        r1.question('Digite o valor da chave (1 a 25) => ', function(chaveStr) {
+            const chave = parseInt(chaveStr);
+
+            if(isNaN(chave) || chave < 1 || chave > 25) {
+                console.log("Chave invalida. Uso um numero entre 1 e 25");
+                r1.close();
+                return;
+            }
+
+            if(operacao === '1') {
+                const criptografada = cifraCesar(mensagem, chave);
+                console.log('Mensagem criptografada => ', criptografada);
+            }
+
+            else if(operacao === '2') {
+                const descripografada = descriptografarCesar(mensagem, chave);
+                console.log("Mensagem descriptografada => ", descripografada);
+            }
+
+            else
+                console.log('Opcao invalida. Digite 1 para criptografar ou 2 para descriptografar.');
+
+            r1.close();
+        });
+    });
+});
