@@ -26,4 +26,11 @@ Siga as intruções neste documento, pois é o mesmo repositorio para todas as a
 `node cifraCesar.js` <br>
 <br>
 
-* No próprio terminal, terá que digitar a mensagem e a chave que deseja criptografar
+* No próprio terminal, terá que digitar a mensagem e a chave que deseja criptografar <br>
+
+# Cifra de Feistel
+* Para rodar o programa, tem que estar na pasta `cifra-feistel`, caso não esteja nela, abra o terminal e digite o seguinte comando: <br>
+`cd cifra-feistel` <br>
+
+* Após isso, no terminal, digite o seguinte comando: <br>
+`node cifraFeistel.js` <br>
