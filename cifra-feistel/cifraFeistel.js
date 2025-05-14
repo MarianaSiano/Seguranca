@@ -177,7 +177,7 @@ function menu() {
                             const chaveInt = parseKey(key);
                             const encrypted = cifra.encryptString(text, chaveInt);
                             console.log('Resultado =>', encrypted.toUpperCase());
-                            console.log('Guarde esta chave para decriptar:', chaveInt);
+                            console.log('Guarde esta chave para decriptar=> ', chaveInt);
                         } catch(erro) {
                             console.log('Erro =>', erro.message);
                         }
@@ -191,10 +191,18 @@ function menu() {
                     r1.question('Digite a chave => ', (key) => {
                         try {
                             const chaveInt = parseKey(key);
+
+                            //Verifica se o texto encriptado é válido
+                            if(!/^[0-9A-Fa-f]{16}$/.test(text))
+                                throw new Error('Texto encriptado inválido. Deve ter 16 caracteres hexadecimais');
+
                             const decrypted = cifra.decryptString(text, chaveInt);
-                            console.log('Resultado =>', decrypted);
+
+                            //Filtra caracteres nao imprimiveis
+                            const cleanOutput = decrypted.replace(/[^\x20-\x7E]/g, '');
+                            console.log('Resultado =>', cleanOutput || '[Texto não decriptável com esta chave]');
                         } catch(erro) {
-                            console.log('Erro =>', erro.message);
+                            console.log('Erro => ', erro.message);
                         }
                         menu();
                     });
