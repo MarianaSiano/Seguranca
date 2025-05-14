@@ -1,11 +1,10 @@
 const { parse } = require('path');
-const readline = require('readline');
 const { threadId } = require('worker_threads');
+const readline = require('readline');
+const crypto = require('crypto');
 
-class CifraFeistel {
-    constructor(rounds = 16) {
-        this.rounds = rounds;
-    }
+class CifraFeistelSegura {
+    
 
     //Função F com BigInt
     f(key, block) {
