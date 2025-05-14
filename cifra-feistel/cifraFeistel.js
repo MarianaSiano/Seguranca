@@ -1,6 +1,5 @@
-const { parse } = require('path');
+//const { parse } = require('path');
 const readline = require('readline');
-const { threadId } = require('worker_threads');
 
 class CifraFeistel {
     constructor(rounds = 16) {
@@ -36,7 +35,7 @@ class CifraFeistel {
         return subChaves;
     }
 
-    encryptBlocks(block, key) {
+    encryptBlock(block, key) {
         let [left, right] = this.splitBlock(block);
         const subChaves = this.generateSubChaves(key);
 
@@ -45,7 +44,6 @@ class CifraFeistel {
             right = left ^ this.f(subChaves[i], right);
             left = temp;
         }
-
         return this.joinBlocks(left, right);
     }
 
@@ -53,12 +51,11 @@ class CifraFeistel {
         let [left, right] = this.splitBlock(block);
         const subChaves = this.generateSubChaves(key);
 
-        for (let i = this.rounds - 1; i >= 0; i--) {
+        for(let i = this.rounds - 1; i >= 0; i--) {
             const temp = left;
             left = right ^ this.f(subChaves[i], left);
             right = temp;
         }
-
         return this.joinBlocks(left, right);
     }
 
@@ -73,7 +70,7 @@ class CifraFeistel {
         while ((block >> 64n) !== 0n)
             block >>= 8n;
 
-        const encrypted = this.encryptBlocks(block, key);
+        const encrypted = this.encryptBlock(block, key);
         return encrypted.toString(16).padStart(16, '0').toUpperCase();
     }
 
@@ -205,7 +202,7 @@ function menu() {
                             console.log('Chave usada => ', chaveInt);
                             console.log('Copie EXATAMENTE esses valores para decriptar!');
                         } catch (e) {
-                            console.log('❌ Erro:', e.message);
+                            console.log('Erro:', e.message);
                         }
                         menu();
                     });
