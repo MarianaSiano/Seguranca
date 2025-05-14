@@ -34,3 +34,5 @@ Siga as intruções neste documento, pois é o mesmo repositorio para todas as a
 
 * Após isso, no terminal, digite o seguinte comando: <br>
 `node cifraFeistel.js` <br>
+
+* OBSERVAÇÃO: Usa-se a chave que foi digitada e não o que lhe foi fornecido pelo codigo

@@ -1,5 +1,6 @@
 const { parse } = require('path');
 const readline = require('readline');
+const { threadId } = require('worker_threads');
 
 class CifraFeistel {
     constructor(rounds = 16) {
@@ -99,28 +100,6 @@ class CifraFeistel {
     }
 }
 
-//Função para ler chaves
-function parseKey(input) {
-    //Remove espacos acidentais
-    input = input.trim();
-
-    //Tenta interpretar como decimal
-    if (/^\d+$/.test(input)) {
-        const num = parseInt(input, 10);
-        if (num >= 0 && num <= 0xFFFFFFFF)
-            return num;
-        throw new Error('A chave deve estar entre 0 e 4294967295');
-    }
-
-    //Tenta interpretar como hexadecimal (com ou sem 0x)
-    if (/^(0x)?[0-9A-Fa-f]+$/.test(input)) {
-        const hexValue = input.startsWith('0x') ? input.slice(2) : input;
-        if (hexValue.length > 8) throw new Error('Chave hex muito longa (máx 8 caracteres)');
-        return parseInt(hexValue, 16);
-    }
-    throw new Error('Digite um numero decimal ou hexadecimal!');
-}
-
 //Interface com o usuario
 const r1 = readline.createInterface({
     input: process.stdin,
@@ -128,6 +107,42 @@ const r1 = readline.createInterface({
 });
 
 const cifra = new CifraFeistel(16);
+
+//Função para ler chaves
+function parseKey(input) {
+    //Verifica se o input é válido
+    if(input === null || input === undefined)
+        throw new Error('Chave não pode ser nula');
+
+    //Converte para string se não for
+    const strInput = String(input).trim().toLocaleUpperCase();
+
+    //Remove o prefixo '0x' se existir
+    const cleanInput = strInput.startsWith('0x') ? strInput.slice(2) : strInput;
+
+    //Verifica se é hexadecimal válido
+    if(/^[0-9A-F]+$/.test(cleanInput)) {
+        if(cleanInput.length > 8) {
+            throw new Error('Chave hexadecimal deve ter no máximo 8 caracteres (32 bits)');
+        }
+
+        const num = parseInt(cleanInput, 16);
+        if(isNaN(num)) throw new Error('Valor hexadecimal inválido');
+        return num;
+    }
+
+    //Verifica se é decimal válido
+    if(/^\d+$/.test(cleanInput)) {
+        const num = parseInt(cleanInput, 10);
+
+        if(isNaN(num)) throw new Error('Valor decimal invalido');
+        if(num > 0xFFFFFFFF) {
+            throw new Error('Chave deve ser menor que 4294967295 (FFFF FFFF em hex)');
+        }
+        return num;
+    }
+    throw new Error(`Fortato invalido: "${input}". Use decimal (ex.: 123456) ou hexadecimal (ex.: DEADBEEF)`);
+}
 
 function menu() {
     console.log('\n=========== Cifra de Feistel ==============');
@@ -143,7 +158,7 @@ function menu() {
             case '1':
                 r1.question('Digite o bloco hexadecimal (16 caracteres) => ', (block) => {
                     if (!/^[0-9A-Fa-f]{16}$/.test(block)) {
-                        console.log('Erro: O bloco deve ter exatamente 16 caracteres hexadecimais');
+                        console.log('Erro => O bloco deve ter exatamente 16 caracteres hexadecimais');
                         return menu();
                     }
                     r1.question('Digite a chave => ', (key) => {
