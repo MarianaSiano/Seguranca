@@ -1,7 +1,7 @@
 const readline = require('readline');
 
 //Atividade 1
-function cifraCesar(texto, k) {
+function CifraCesar(texto, k) {
 //Garante que o deslocamento esteja entre 1 e 25
     if (k < 1 || k > 25)
         throw new Error("O deslocamento (k) deve estar entre 1 e 25");
@@ -118,7 +118,7 @@ r1.question('Voce que: \n (1) Criptografia \n (2) Descriptografar \n (3) Criptoa
                 }
 
                 if(operacao === '1') {
-                    const criptografada = cifraCesar(mensagem, chave);
+                    const criptografada = CifraCesar(mensagem, chave);
                     console.log('\n Mensagem criptografada => ', criptografada);
                 }
 
