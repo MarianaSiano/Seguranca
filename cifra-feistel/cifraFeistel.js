@@ -89,14 +89,6 @@ class CifraFeistel
     }
 }
 
-//Interface com o usuario
-const r1 = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-});
-
-const cifra = new CifraFeistel(16);
-
 //Função para ler chaves
 function parseKey(input) {
     //Remove espacos acidentais
@@ -119,6 +111,14 @@ function parseKey(input) {
     throw new Error('Digite um numero decimal ou hexadecimal!');
 }
 
+//Interface com o usuario
+const r1 = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+
+const cifra = new CifraFeistel(16);
+
 function menu() {
     console.log('\n=========== Cifra de Feistel ==============');
     console.log('1. Encriptar bloco hexadecimal');
@@ -126,16 +126,25 @@ function menu() {
     console.log('3. Encriptar texto');
     console.log('4. Decriptar texto');
     console.log('5. Sair');
+    console.log('\nDica: Chave pode ser decimal (123456) ou hex (DEADBEEF)');
 
-    r1.question('Escolha uma opcao (1-5) => ', (choice) => {
+    r1.question('Escolha uma opção (1-5) => ', (choice) => {
         switch(choice) {
             case '1':
                 r1.question('Digite o bloco hexadecimal (16 caracteres) => ', (block) => {
-                    r1.question('Digite a chave (8 caracteres hex) => ', (key) => {
-                        const blockBigInt = BigInt('0x' + block);
-                        const chaveInt = parseInt(key, 16);
-                        const encrypted = cifra.encryptBlocks(blockBigInt, chaveInt);
-                        console.log('Resultado => ', encrypted.toString(16).padStart(16, '0'));
+                    if(!/^[0-9A-Fa-f]{16}$/.test(block)) {
+                        console.log('Erro: O bloco deve ter exatamente 16 caracteres hexadecimais');
+                        return menu();
+                    }
+                    r1.question('Digite a chave => ', (key) => {
+                        try {
+                            const blockBigInt = BigInt('0x' + block);
+                            const chaveInt = parseKey(key);
+                            const encrypted = cifra.encryptBlock(blockBigInt, chaveInt);
+                            console.log('Resultado =>', encrypted.toString(16).padStart(16, '0').toUpperCase());
+                        } catch(erro) {
+                            console.log('Erro =>', erro.message);
+                        }
                         menu();
                     });
                 });
@@ -143,11 +152,19 @@ function menu() {
 
             case '2':
                 r1.question('Digite o bloco encriptado (16 caracteres hex) => ', (block) => {
-                    r1.question('Digite a chave (8 caracteres hex) => ', (key) => {
-                        const blockBigInt = BigInt('0x' + 16);
-                        const chaveInt = parseInt(key, 16);
-                        const decrypted = cifra.decryptBlock(blockBigInt, chaveInt);
-                        console.log('Resultado => ', decrypted.toString(16), padStart(16, '0'));
+                    if(!/^[0-9A-Fa-f]{16}$/.test(block)) {
+                        console.log('Erro: O bloco deve ter exatamente 16 caracteres hexadecimais');
+                        return menu();
+                    }
+                    r1.question('Digite a chave => ', (key) => {
+                        try {
+                            const blockBigInt = BigInt('0x' + block);
+                            const chaveInt = parseKey(key);
+                            const decrypted = cifra.decryptBlock(blockBigInt, chaveInt);
+                            console.log('Resultado =>', decrypted.toString(16).padStart(16, '0').toUpperCase());
+                        } catch(erro) {
+                            console.log('Erro =>', erro.message);
+                        }
                         menu();
                     });
                 });
@@ -155,13 +172,14 @@ function menu() {
 
             case '3':
                 r1.question('Digite o texto a encriptar => ', (text) => {
-                    r1.question('Digite a chave (ex.: DEADBEEF) => ', (key) => {
+                    r1.question('Digite a chave => ', (key) => {
                         try {
                             const chaveInt = parseKey(key);
                             const encrypted = cifra.encryptString(text, chaveInt);
-                            console.log('Resultado => ', encrypted);
+                            console.log('Resultado =>', encrypted.toUpperCase());
+                            console.log('Guarde esta chave para decriptar:', chaveInt);
                         } catch(erro) {
-                            console.log('Erro => ', erro.message);
+                            console.log('Erro =>', erro.message);
                         }
                         menu();
                     });
@@ -170,13 +188,13 @@ function menu() {
 
             case '4':
                 r1.question('Digite o texto encriptado (hex) => ', (text) => {
-                    r1.question('Digite a chave (ex.: DEADBEEF) => ', (key) => {
+                    r1.question('Digite a chave => ', (key) => {
                         try {
                             const chaveInt = parseKey(key);
                             const decrypted = cifra.decryptString(text, chaveInt);
-                            console.log('Resultado => ', decrypted);
+                            console.log('Resultado =>', decrypted);
                         } catch(erro) {
-                            console.log('Erro => ', erro.message);
+                            console.log('Erro =>', erro.message);
                         }
                         menu();
                     });
@@ -188,13 +206,13 @@ function menu() {
             break;
             
             default:
-                console.log('Opção invalida!');
+                console.log('Opção inválida!');
                 menu();
         }
     });
 }
 
-//Inicia o programa
-console.log('Bem vindo(a) ao sistema do Cifra de Feistel!');
-console.log('A chave pode ser inserida em hexadecimal (ex.: DEADBEEF, 0xDEADBEEF, deadbeef, 5d8f9db3)');
+// Inicia o programa
+console.log('Bem vindo(a) ao sistema de Cifra de Feistel!');
+console.log('Você pode usar chaves decimais (123456) ou hexadecimais (DEADBEEF)');
 menu();
