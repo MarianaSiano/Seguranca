@@ -23,7 +23,7 @@ Siga as intruções neste documento, pois é o mesmo repositorio para todas as a
 `cd cifra-cesar` <br>
 
 * Após isso, no terminal, digite o seguinte comando: <br>
-`node cifraCesar.js` <br>
+`node CifraCesar.js` <br>
 <br>
 
 * No próprio terminal, terá que digitar a mensagem e a chave que deseja criptografar <br>
@@ -33,6 +33,6 @@ Siga as intruções neste documento, pois é o mesmo repositorio para todas as a
 `cd cifra-feistel` <br>
 
 * Após isso, no terminal, digite o seguinte comando: <br>
-`node cifraFeistel.js` <br>
+`node CifraFeistelSegura.js` <br>
 
 * OBSERVAÇÃO: Usa-se a chave que foi digitada e não o que lhe foi fornecido pelo codigo
