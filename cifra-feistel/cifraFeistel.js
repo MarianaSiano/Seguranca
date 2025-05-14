@@ -1,5 +1,6 @@
-//const { parse } = require('path');
+const { parse } = require('path');
 const readline = require('readline');
+const { threadId } = require('worker_threads');
 
 class CifraFeistel {
     constructor(rounds = 16) {
@@ -28,7 +29,7 @@ class CifraFeistel {
     generateSubChaves(key) {
         const subChaves = [];
         let current = key;
-        for (let i = 0; i < this.rounds; i++) {
+        for(let i = 0; i < this.rounds; i++) {
             subChaves.push(current);
             current = ((current << 1) | (current >>> 31)) & 0xFFFFFFFF;
         }
@@ -39,7 +40,7 @@ class CifraFeistel {
         let [left, right] = this.splitBlock(block);
         const subChaves = this.generateSubChaves(key);
 
-        for (let i = 0; i < this.rounds; i++) {
+        for(let i = 0; i < this.rounds; i++) {
             const temp = right;
             right = left ^ this.f(subChaves[i], right);
             left = temp;
@@ -63,11 +64,11 @@ class CifraFeistel {
         const buffer = Buffer.from(text, 'utf8');
         let block = 0n;
 
-        for (let i = 0; i < Math.min(8, buffer.length); i++)
+        for(let i = 0; i < Math.min(8, buffer.length); i++)
             block = (block << 8n) | BigInt(buffer[i]);
 
         //Padding para garantir 8 bytes
-        while ((block >> 64n) !== 0n)
+        while((block >> 64n) !== 0n)
             block >>= 8n;
 
         const encrypted = this.encryptBlock(block, key);
@@ -76,7 +77,7 @@ class CifraFeistel {
 
     decryptString(hex, key) {
         try {
-            const block = BigInt('0x' + hex);
+            const block = safeHexToBigInt(hex);
             const decrypted = this.decryptBlock(block, key);
             const bytes = [];
             let temp = decrypted;
@@ -86,13 +87,12 @@ class CifraFeistel {
                 temp >>= 8n;
             }
 
-            //Remove padding zeros
-            while(bytes.length > 1 && bytes[0] === 0)
+            while(bytes.length > 1 && bytes[0] == 0)
                 bytes.shift();
 
-            return Buffer.from(bytes).toString('utf8');
+            return Buffer.from(bytes).toString('utf8')
         } catch(erro) {
-            return "[Decriptação falhou - verifique a chave e o texto encriptado]";
+            return `[Falha na decriptação => ${erro.message}]`;
         }
     }
 }
@@ -105,67 +105,81 @@ const r1 = readline.createInterface({
 
 const cifra = new CifraFeistel(16);
 
+//Funcao para converter hexadecimal
+function safeHexToBigInt(hex) {
+    if(!hex || typeof hex !== 'string')
+        throw new Error('Valor hexadecimal não pode estar vazio');
+
+    //Remove espaços e prefixo 0x se existir
+    const cleanHex = hex.trim().replace(/^0x/i, '');
+
+    //Verifica se é hexadecimal válido
+    if(!/^[0-9A-F]+$/i.test(cleanHex))
+        throw new Error(`"${hex}" nao é um hexadecimal valido`);
+
+    try {
+        return BigInt('0x' + cleanHex);
+    } catch(erro) {
+        throw new Error(`Falha ao converter "${hex}" para BigInt`);
+    }
+}
+
 //Função para ler chaves
 function parseKey(input) {
     //Verifica se o input é válido
-    if(input === null || input === undefined)
-        throw new Error('Chave não pode ser nula');
+    if(!input || typeof input !== 'string')
+        throw new Error('Chave não pode estar vazia');
 
-    //Converte para string se não for
-    const strInput = String(input).trim().toLocaleUpperCase();
+    const chaveOriginal = input.trim();
+    const strInput = chaveOriginal.toUpperCase();
 
-    //Remove o prefixo '0x' se existir
-    const cleanInput = strInput.startsWith('0x') ? strInput.slice(2) : strInput;
-
-    //Verifica se é hexadecimal válido
-    if(/^[0-9A-F]+$/.test(cleanInput)) {
-        if(cleanInput.length > 8) {
-            throw new Error('Chave hexadecimal deve ter no máximo 8 caracteres (32 bits)');
+    if(/^(0x)?[0-9A-F]+$/i.test(strInput)) {
+        const hexValue = strInput.replace(/^0x/, '');
+        if(hexValue.length > 8)
+            throw new Error('Chave hex deve ter no maximo 8 caracteres');
+        try {
+            const num = parseInt(hexValue, 16);
+            if(isNaN(num)) throw new Error('Valor hexadecimal invalido');
+            return { numeric: num, original: chaveOriginal };
+        } catch(erro) {
+            throw new Error(`Falha ao processar chave hexadecimal => ${erro.message}`);
         }
-
-        const num = parseInt(cleanInput, 16);
-        if(isNaN(num)) throw new Error('Valor hexadecimal inválido');
-        return num;
     }
 
-    //Verifica se é decimal válido
-    if(/^\d+$/.test(cleanInput)) {
-        const num = parseInt(cleanInput, 10);
+    if(/^\d+$/.test(strInput)) {
+        const num = parseInt(strInput, 10);
 
         if(isNaN(num)) throw new Error('Valor decimal invalido');
-        if(num > 0xFFFFFFFF) {
-            throw new Error('Chave deve ser menor que 4294967295 (FFFF FFFF em hex)');
-        }
-        return num;
+        if(num > 0xFFFFFFFF)
+            throw new Error('Chave deve ser menor que 4294967295');
+        return { numeric: num, original: chaveOriginal };
     }
-    throw new Error(`Fortato invalido: "${input}". Use decimal (ex.: 123456) ou hexadecimal (ex.: DEADBEEF)`);
+    throw new Error(`Formato invalido => "${chaveOriginal}"`)
 }
 
 function menu() {
     console.log('\n=========== Cifra de Feistel ==============');
-    console.log('1. Encriptar bloco hexadecimal');
-    console.log('2. Decriptar bloco hexadecimal');
-    console.log('3. Encriptar texto');
-    console.log('4. Decriptar texto');
-    console.log('5. Sair');
+    console.log('1. Encriptar texto');
+    console.log('2. Decriptar texto');
+    console.log('3. Sair');
     console.log('\nDica: Chave pode ser decimal (123456) ou hex (DEADBEEF)');
 
-    r1.question('Escolha uma opção (1-5) => ', (choice) => {
-        switch (choice) {
+    r1.question('Escolha uma opção (1-3) => ', (choice) => {
+        switch(choice) {
             case '1':
-                r1.question('Digite o bloco hexadecimal (16 caracteres) => ', (block) => {
-                    if (!/^[0-9A-Fa-f]{16}$/.test(block)) {
-                        console.log('Erro => O bloco deve ter exatamente 16 caracteres hexadecimais');
-                        return menu();
-                    }
+                r1.question('Texto para encriptar => ', (text) => {
                     r1.question('Digite a chave => ', (key) => {
                         try {
-                            const blockBigInt = BigInt('0x' + block);
-                            const chaveInt = parseKey(key);
-                            const encrypted = cifra.encryptBlock(blockBigInt, chaveInt);
-                            console.log('Resultado =>', encrypted.toString(16).padStart(16, '0').toUpperCase());
-                        } catch (erro) {
-                            console.log('Erro =>', erro.message);
+                            //Armazena a chave original antes de qualquer processamento
+                            const chaveOriginal = key.trim();
+                            const { numeric: chaveInt } = parseKey(key);
+                            const encrypted = cifra.encryptString(text, chaveInt);
+
+                            console.log('\nTexto encriptado => ', encrypted);
+                            console.log('Chave usada => ', chaveOriginal); //Exibe a chave exara digitada
+                            console.log('Anote esses valores para descriptar!');
+                        } catch(erro) {
+                            console.log('Erro:', erro.message);
                         }
                         menu();
                     });
@@ -173,19 +187,28 @@ function menu() {
                 break;
 
             case '2':
-                r1.question('Digite o bloco encriptado (16 caracteres hex) => ', (block) => {
-                    if (!/^[0-9A-Fa-f]{16}$/.test(block)) {
-                        console.log('Erro: O bloco deve ter exatamente 16 caracteres hexadecimais');
+                r1.question('Texto encriptado (16 caracteres hexadecimais) => ', (encrypted) => {
+                    if(!/^[0-9A-F]{16}$/i.test(encrypted)) {
+                        console.log('O texto encriptado deve ter 16 caracteres hexadecimais!');
                         return menu();
                     }
-                    r1.question('Digite a chave => ', (key) => {
+                    r1.question('Digite a chave usada anteriormente =>  ', (key) => {
                         try {
-                            const blockBigInt = BigInt('0x' + block);
-                            const chaveInt = parseKey(key);
-                            const decrypted = cifra.decryptBlock(blockBigInt, chaveInt);
-                            console.log('Resultado =>', decrypted.toString(16).padStart(16, '0').toUpperCase());
-                        } catch (erro) {
-                            console.log('Erro =>', erro.message);
+                            const chaveOrigial = key.trim();
+                            const { numeric: chaveInt } = parseKey(key);
+                            const decrypted = cifra.decryptString(encrypted, chaveInt);
+
+                            //Filtra caracteres não ASCII
+                            const clean = decrypted.replace(/[^\x20-\x7E]/g, '');
+
+                            if(clean.length !== decrypted.length) {
+                                console.log('\nAviso: Alguns caracteres inválidos foram removidos');
+                            }
+
+                            console.log('\nTexto decriptado => ', clean || '[Não foi possível decriptar]');
+                            console.log('Dica: Verifique se a chave e texto encriptado estão corretos');
+                        } catch(erro) {
+                            console.log('Erro => ', erro.message);
                         }
                         menu();
                     });
@@ -193,51 +216,6 @@ function menu() {
                 break;
 
             case '3':
-                r1.question('Texto para encriptar => ', (text) => {
-                    r1.question('Digite a chave => ', (key) => {
-                        try {
-                            const chaveInt = parseKey(key);
-                            const encrypted = cifra.encryptString(text, chaveInt);
-                            console.log('\nTexto encriptado=> ', encrypted.toUpperCase());
-                            console.log('Chave usada => ', chaveInt);
-                            console.log('Copie EXATAMENTE esses valores para decriptar!');
-                        } catch (e) {
-                            console.log('Erro:', e.message);
-                        }
-                        menu();
-                    });
-                });
-                break;
-
-            case '4':
-                r1.question('Cole o texto encriptado (EXATO) => ', (encrypted) => {
-                    if (!/^[0-9A-F]{16}$/i.test(encrypted)) {
-                        console.log('O texto encriptado deve ter 16 caracteres hexadecimais!');
-                        return menu();
-                    }
-                    r1.question('Digite a chave EXATA usada =>  ', (key) => {
-                        try {
-                            const chaveInt = parseKey(key);
-                            const decrypted = cifra.decryptString(encrypted, chaveInt);
-
-                            //Filtra caracteres não ASCII
-                            const clean = decrypted.replace(/[^\x20-\x7E]/g, '');
-
-                            if (clean.length !== decrypted.length) {
-                                console.log('\nAviso: Alguns caracteres inválidos foram removidos');
-                            }
-
-                            console.log('\nTexto decriptado => ', clean || '[Não foi possível decriptar]');
-                            console.log('Dica: Verifique se a chave e texto encriptado estão corretos');
-                        } catch (e) {
-                            console.log('Erro => ', e.message);
-                        }
-                        menu();
-                    });
-                });
-                break;
-
-            case '5':
                 r1.close();
                 break;
 
