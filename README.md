@@ -35,4 +35,4 @@ Siga as intruções neste documento, pois é o mesmo repositorio para todas as a
 * Após isso, no terminal, digite o seguinte comando: <br>
 `node CifraFeistelSegura.js` <br>
 
-* OBSERVAÇÃO: Usa-se a chave que foi digitada e não o que lhe foi fornecido pelo codigo
+* OBSERVAÇÃO: Na Cifra de Feistel, para descriptografar, usa-se a mesma chave que foi utilizada para criptografar e o numero hexadecimal fornecido pelo sistema

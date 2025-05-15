@@ -77,17 +77,18 @@ class CifraFeistelSegura {
     encrypt(text, key) {
         const subChaves = this.generateSubChaves(key);
         const data = this.padPKCS7(Buffer.from(text, 'utf8'));
-        const iv = crypto.randomBytes(this.blockSize);
+        //iv = Initialization Vector
+        const iv = crypto.randomBytes(this.blockSize); //8 bytes (64 bits)
         const blocks = [];
         let previous = BigInt('0x' + iv.toString('hex'));
 
         for(let i = 0; i < data.length; i += this.blockSize) {
             let block = BigInt('0x' + data.slice(i, i + this.blockSize).toString('hex'));
-            block ^= previous;
+            block ^= previous; //XOR com IV na primeira rodada
 
             const encrypted = this.encryptBlock(block, subChaves);
             blocks.push(encrypted);
-            previous = encrypted;
+            previous = encrypted; //Atualiza para CBC (Cipher Block Chaining)
         }
         const encryptedHex = blocks.map(b => b.toString(16).padStart(16, '0')).join('');
         return iv.toString('hex') + encryptedHex;
@@ -115,7 +116,7 @@ class CifraFeistelSegura {
                 temp >>= 8n
             }
             decrypted.push(buf);
-            previous = block;
+            previous = block; //CBC => Usa bloco anterior
         }
         return this.unpadPKCS7(Buffer.concat(decrypted)).toString('utf8');
     }
