@@ -82,4 +82,19 @@ function modPow(base, exponent, modulus)
 
 //Classe Blum Blum Shub
 class BlumBlumShub
-{}
+{
+    constructor(p, q, seed) {
+        //Verificar se p e q são primos ≡ 3 mod 4
+        if(!isPrime(p) || p % 4 !== 3) 
+            throw new Error('p deve ser primo ≡ 3 mod 4');
+
+        if(!isPrime(q) || q % 4 !== 3)
+            throw new Error('q deve ser primo ≡ 3 mod 4');
+
+        if(!isCoprime(seed, p * q))
+            throw new Error('A semente deve ser coprima com n = p*q');
+
+        this.n = p * q;
+        this.state = seed % this.n;
+    }
+}
