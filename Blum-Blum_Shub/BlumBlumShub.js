@@ -114,3 +114,25 @@ class BlumBlumShub
         return bits;
     }
 }
+
+//Parâmetros do algoritmo (primos > 1000 ≡ 3 mod 4)
+const p = 10007; //Primo ≡ 3 mod 4
+const q = 10039; //Primo ≡ 3 mod 4
+const seed = 101; //Somente co-prima com n
+
+//Verificação dos parâmetros
+console.log(`p é primo e ≡ 3 mod 4? ${isPrime(p) && p % 4 === 3}`);
+console.log(`q é primo e ≡ 3 mod 4? ${isPrime(q) && q % 4 === 3}`);
+console.log(`semente é co-primo com n? ${isCoprimo(seed, p * q)}`);
+
+//Criar gerador BBS
+const bbs = new BlumBlumShub(p, q, seed);
+
+//Gerar 1.000.000 de bits para teste NIST
+const bits = bbs.generateBits(1000000);
+
+//Salvar em arquivo para testes NIST
+const bitString = bits.join('');
+fs.writeFileSync('bbs_bits.txt', bitString);
+
+console.log('Sequência de 1.000.000 bits gerada e salva em bbs_bits.txt');
