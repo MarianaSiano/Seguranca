@@ -97,4 +97,20 @@ class BlumBlumShub
         this.n = p * q;
         this.state = seed % this.n;
     }
+
+    //Gerar próximo bit
+    nextBit() {
+        this.state = modPow(this.state, 2, this.n);
+        return this.state % 2;
+    }
+
+    //Gerar sequência de bits
+    generateBits(length) {
+        const bits = [];
+
+        for(let i = 0; i < length; i++)
+            bits.push(this.nextBit());
+
+        return bits;
+    }
 }
