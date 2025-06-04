@@ -1,29 +1,20 @@
+const fs = require('fs');
 
-const { fs } = require('fs');
-
-const readline = require('readline').createInterface({
-    input: process.stdin,
-    output: process.stdout
-});
-
-//Função para calcular GCD (Máximo Divisor Comum)
-function gcd(a, b)
+function gcd(a, b) 
 {
-    while(b !== 0) {
-        [a, b] = [b, a % b];
-    }
+    while (b !== 0) [a, b] = [b, a % b];
     return a;
 }
 
-//Função de exponenciação modular eficiente
-function modPow(base, exponent, modulus)
+//Exponenciação modular
+function modPow(base, exponent, modulus) 
 {
     let result = 1;
     base = base % modulus;
 
     while(exponent > 0) {
         if(exponent % 2 === 1)
-            result  (result * base) % modulus;
+            result = (result * base) % modulus;
 
         exponent = exponent >> 1;
         base = (base * base) % modulus;
@@ -31,8 +22,8 @@ function modPow(base, exponent, modulus)
     return result;
 }
 
-//Teste de primalidade Miller-Rabin
-function isPrimo(num)
+//Teste de primalidade
+function isPrimo(num) 
 {
     if(num < 2)
         return false;
@@ -45,110 +36,51 @@ function isPrimo(num)
 
     const sqrt = Math.floor(Math.sqrt(num));
     for(let i = 3; i <= sqrt; i += 2) {
-        if(num % i === 0)
-            return false;
+        if(num % i === 0) return false;
     }
     return true;
 }
 
-//Função para gerar bits com Blum Blum Shub
-function gerarBitsBBS(p, q, quantidadeBits = 64)
+//Gera um primo ≡ 3 mod 4
+function gerarPrimo(min)
+{
+    let p = min | 1;
+    while(!isPrimo(p) || p % 4 !== 3) p += 2;
+    return p;
+}
+
+//Gera bits com BBS
+function gerarBitsBBS(p, q, numBits = 100000)
 {
     const n = p * q;
 
-    //s deve ser co-primo de n
-    let s = 3;
-    while(gcd(s, n) !== 1) {
-        s++;
-    }
+    //Gera seed aleatória segura
+    let s;
+    do {
+        s = Math.floor(Math.random() * (n - 2)) + 2;
+    } while (gcd(s, n) !== 1);
+
+    console.log(`Semente s usada (secreta em casos reais) => ${s}`);
+    console.log(`n (p * q) => ${n}`);
+
     let x = (s * s) % n;
     let bits = '';
 
-    for(let i = 0; i < quantidadeBits; i++) {
+    while(bits.length < numBits) {
         x = (x * x) % n;
-        bits += (x % 2).toString();
+        const bitsDeX = x.toString(2).padStart(32, '0');
+        bits += bitsDeX;
     }
-    return bits;
+
+    return bits.slice(0, numBits);
 }
 
-//Busca um segundo primo para formar n = p * q
-function buscarOutroPrimo(p)
-{
-    let q = p + 2;
-    while(true) {
-        if(isPrimo(q) && q % 4 === 3)
-            return q;
+//======================== EXECUÇÃO ============================
+const p = gerarPrimo(100000);
+const q = gerarPrimo(p + 1000);
 
-    q += 2;
-    }
-}
+console.log(`Primos usados:\np => ${p}\nq => ${q}`);
+const bitstream = gerarBitsBBS(p, q, 100000); //100 mil bits
 
-//Função principal para verificar o número
-function verificaNumero()
-{
-    readline.question('\nDigite um numero maior que 10.000 para verificar (ou SAIR para encerrar) => ', input => {
-        if(input.toLowerCase() === 'sair') {
-            console.log('Encerrando o programa...');
-            return readline.close();
-        }
-        const num = Number(input);
-
-        if(isNaN(num)) {
-            console.log('Por favor, digite um numero valido!');
-            return verificaNumero();
-        }
-
-        if(num <= 10000) {
-            console.log('O numero deve ser maior que 10.000');
-            return verificaNumero();
-        }
-
-        const primo = isPrimo(num);
-        const congruente = num % 4 === 3;
-
-        console.log('\n===================================================');
-        console.log(`Numero analisado => ${num}`);
-        console.log(`Eh primo? ${primo ? 'Sim' : 'Nao'}`);
-        console.log(`Eh maior que 10.000? ${num > 10000 ? 'Sim' : 'Nao'}`);
-        console.log(`Eh congruente a 3 mod 4 (≡ 3 mod 4)? ${congruente ? 'Sim' : 'Nao'}`);
-
-        if(primo && congruente) {
-            console.log('\nEste numero PODE ser usado no Blum Blum Shub!');
-            console.log('Atende a todos os requisitos:');
-            console.log('- Primo');
-            console.log('- Maior que 10.000');
-            console.log('- Congruente a 3 mod 4');
-
-            const p = num;
-            const q = buscarOutroPrimo(p);
-            console.log(`Primo complementar gerado => ${q}`);
-
-            const bits = gerarBitsBBS(p, q, 64);
-            console.log('\nBits gerados com BBS (64 bits):');
-            console.log(bits);
-        } else {
-            console.log('\nEste numero NAO pode ser usado no Blum Blum Shub');
-            if(!primo) {
-                console.log('- Nao eh primo');
-            }
-
-            if(!congruente) {
-                console.log('- Nao eh congruente a 3 mod 4');
-            }
-        }
-        console.log('===================================================\n');
-        verificaNumero(); //Chama recursivamente para nova verificação
-    });
-}
-
-//Iniciar o programa
-console.log('==================================================');
-console.log('Verificador de primos para Blum Blum Shub');
-console.log('==================================================');
-console.log('Requisitos para o uso no BBS:');
-console.log('- Deve ser numero primo');
-console.log('- Deve ser maior que 10.000');
-console.log('- Deve ser congruente a 3 mod 4');
-console.log('Digite SAIR a qualquer momento para encerrar');
-
-verificaNumero();
+fs.writeFileSync('bits_bbs.txt', bitstream);
+console.log('Arquivo bits_bbs.txt gerado com sucesso!');
