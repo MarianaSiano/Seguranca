@@ -1,5 +1,5 @@
-const { triggerAsyncId } = require('async_hooks');
-const { read } = require('fs');
+
+const { fs } = require('fs');
 
 const readline = require('readline').createInterface({
     input: process.stdin,
@@ -18,16 +18,13 @@ function gcd(a, b)
 //Função de exponenciação modular eficiente
 function modPow(base, exponent, modulus)
 {
-    if(modulus === 1)
-        return 0;
-
     let result = 1;
     base = base % modulus;
 
     while(exponent > 0) {
-        if(exponent % 2 === 1) {
-            result = (result * base) % modulus;
-        }
+        if(exponent % 2 === 1)
+            result  (result * base) % modulus;
+
         exponent = exponent >> 1;
         base = (base * base) % modulus;
     }
@@ -154,7 +151,7 @@ function verificaNumero()
             console.log(`Primo complementar gerado => ${q}`);
 
             const bits = gerarBitsBBS(p, q, 64);
-            console.log('\nBits gerados com BBS (64 bits) => ');
+            console.log('\nBits gerados com BBS (64 bits):');
             console.log(bits);
         } else {
             console.log('\nEste numero NAO pode ser usado no Blum Blum Shub');
