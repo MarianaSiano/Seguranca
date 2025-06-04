@@ -1,4 +1,4 @@
-# Seguranca
+# Segurança
 Repositório para atividades da disciplina Segurança em Sistemas de Computação. <br>
 Siga as intruções neste documento, pois é o mesmo repositorio para todas as atividades
 
