@@ -1,4 +1,5 @@
 const { triggerAsyncId } = require('async_hooks');
+const { read } = require('fs');
 
 const readline = require('readline').createInterface({
     input: process.stdin,
@@ -113,3 +114,61 @@ function buscarOutroPrimo(p)
 }
 
 //Função principal para verificar o número
+function verificaNumero()
+{
+    readline.question('\nDigite um numero maior que 10.000 para verificar (ou SAIR para encerrar) => ', input => {
+        if(input.toLowerCase() === 'sair') {
+            console.log('Encerrando o programa...');
+            return readline.close();
+        }
+        const num = Number(input);
+
+        if(isNaN(num)) {
+            console.log('Por favor, digite um numero valido!');
+            return verificaNumero();
+        }
+
+        if(num <= 10000) {
+            console.log('O numero deve ser maior que 10.000');
+            return verificaNumero();
+        }
+
+        const primo = isPrimo(num);
+        const congruente = num % 4 === 3;
+
+        console.log('\n===================================================');
+        console.log(`Numero analisado => ${num}`);
+        console.log(`Eh primo? ${primo ? 'Sim' : 'Nao'}`);
+        console.log(`Eh maior que 10.000? ${num > 10000 ? 'Sim' : 'Nao'}`);
+        console.log(`Eh congruente a 3 mod 4 (≡ 3 mod 4)? ${congruente ? 'Sim' : 'Nao'}`);
+
+        if(primo && congruente) {
+            console.log('\nEste numero PODE ser usado no Blum Blum Shub!');
+            console.log('Atende a todos os requisitos:');
+            console.log('- Primo');
+            console.log('- Maior que 10.000');
+            console.log('- Congruente a 3 mod 4');
+
+            const p = num;
+            const q = buscarOutroPrimo(p);
+            console.log(`Primo complementar gerado => ${q}`);
+
+            const bits = gerarBitsBBS(p, q, 64);
+            console.log('\nBits gerados com BBS (64 bits) => ');
+            console.log(bits);
+        } else {
+            console.log('\nEste numero NAO pode ser usado no Blum Blum Shub');
+            if(!primo) {
+                console.log('- Nao eh primo');
+            }
+
+            if(!congruente) {
+                console.log('- Nao eh congruente a 3 mod 4');
+            }
+        }
+        console.log('===================================================\n');
+        verificaNumero(); //Chama recursivamente para nova verificação
+    });
+}
+
+//Iniciar o programa
