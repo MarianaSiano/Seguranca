@@ -172,3 +172,13 @@ function verificaNumero()
 }
 
 //Iniciar o programa
+console.log('==================================================');
+console.log('Verificador de primos para Blum Blum Shub');
+console.log('==================================================');
+console.log('Requisitos para o uso no BBS:');
+console.log('- Deve ser numero primo');
+console.log('- Deve ser maior que 10.000');
+console.log('- Deve ser congruente a 3 mod 4');
+console.log('Digite SAIR a qualquer momento para encerrar');
+
+verificaNumero();
