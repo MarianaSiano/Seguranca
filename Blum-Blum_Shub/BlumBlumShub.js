@@ -32,47 +32,20 @@ function modPow(base, exponent, modulus)
 }
 
 //Teste de primalidade Miller-Rabin
-function isPrimo(num, k = 10)
+function isPrimo(num)
 {
-    if(num <= 1)
+    if(num < 2)
         return false;
 
-    if(num <= 3)
+    if(num === 2 || num === 3)
         return true;
 
-    if(num % 2 === 0 && num % 3 === 0)
+    if(num % 2 === 0)
         return false;
 
-    let d = num - 1;
-    let s = 0;
-
-    while(d % 2 === 0) {
-        d /= 2;
-        s++;
-    }
-
-    const bases = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29];
-
-    for(let i = 0; i < Math.min(k, bases.length); i++) {
-        const a = bases[i];
-
-        if(a >= num)
-            continue;
-
-        let x = modPow(a, d, num);
-        if(x === 1 || x === num - 1)
-            continue
-
-        let composite = true;
-
-        for(let j = 0; j < s - 1; j++) {
-            x = modPow(x, 2, num);
-            if(x === num - 1) {
-                composite = false;
-                break;
-            }
-        }
-        if(composite)
+    const sqrt = Math.floor(Math.sqrt(num));
+    for(let i = 3; i <= sqrt; i += 2) {
+        if(num % i === 0)
             return false;
     }
     return true;
