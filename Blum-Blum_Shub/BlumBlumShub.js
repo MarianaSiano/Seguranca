@@ -1,4 +1,4 @@
-// const fs = require('fs');
+const fs = require('fs');
 
 //Função para calcular o máximo divisor comum (GCD)
 function gcd(a, b) 
@@ -101,7 +101,7 @@ class BlumBlumShub
         return this.state % 2;
     }
 
-    // Gerar sequência de bits
+    //Gerar sequência de bits
     generateBits(length) {
         const bits = [];
         for (let i = 0; i < length; i++) {
@@ -124,15 +124,15 @@ console.log(`semente eh coprima com n? ${isCoprimo(seed, p * q)}`);
 //Criar gerador BBS
 const bbs = new BlumBlumShub(p, q, seed);
 
-//Gerar 1.000.000 de bits para teste NIST
-console.log('Gerando 1.000.000 bits... Isso pode levar alguns segundos...');
-const bits = bbs.generateBits(1000000);
+//Gerar 10.000 de bits para teste NIST
+console.log('Gerando 10.000 bits... Isso pode levar alguns segundos...');
+const bits = bbs.generateBits(10000);
 
 //Converter para string (para salvar em arquivo se necessário)
 const bitString = bits.join('');
 
-//Mostrar os primeiros 1.000.000 bits como exemplo
-console.log('Primeiros 1.000.000 bits => ', bitString.substring(0, 1000000));
+//Mostrar os primeiros 10.000 bits como exemplo
+console.log('Primeiros 10.000 bits => ', bitString.substring(0, 10000));
 
-// fs.writeFileSync('bbs_bits.txt', bitString);
-// console.log('Sequência de bits salva em bbs_bits.txt');
+fs.writeFileSync('bbs_bits.txt', bitString);
+console.log('Sequência de bits salva em bbs_bits.txt');
