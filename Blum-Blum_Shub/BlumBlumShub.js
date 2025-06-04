@@ -99,3 +99,17 @@ function gerarBitsBBS(p, q, quantidadeBits = 64)
     }
     return bits;
 }
+
+//Busca um segundo primo para formar n = p * q
+function buscarOutroPrimo(p)
+{
+    let q = p + 2;
+    while(true) {
+        if(isPrimo(q) && q % 4 === 3)
+            return q;
+
+    q += 2;
+    }
+}
+
+//Função principal para verificar o número
