@@ -80,7 +80,7 @@ function isPrimo(num, k = 10)
 //Função principal para verificar o número
 function verificarNumero()
 {
-    readline.question('\nDigite um numero maior que 10.000 para verificar (ou sair para encerrar) => ', input => {
+    readline.question('\nDigite um numero maior que 10.000 para verificar (ou SAIR para encerrar) => ', input => {
         if(input.toLowerCase() === 'sair') {
             console.log('Encerrando o programa...');
             return readline.close();
@@ -123,5 +123,16 @@ function verificarNumero()
         console.log('===================================================\n');
 
         verificarNumero(); //Chama recursivamente para nova verificação
-    })
+    });
 }
+
+//Iniciar o programa
+console.log('==============================================');
+console.log('VERIFICADOR DE PRIMOS PARA BLUM BLUM SHUB');
+console.log('==============================================');
+console.log('Requisitos para o uso no BBS:');
+console.log('- Deve ser numero primo');
+console.log('- Deve ser maior que 10.000');
+console.log('Digite SAIR a qualquer momento para encerrar');
+
+verificarNumero();
