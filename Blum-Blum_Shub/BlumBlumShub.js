@@ -76,3 +76,52 @@ function isPrimo(num, k = 10)
     }
     return true;
 }
+
+//Função principal para verificar o número
+function verificarNumero()
+{
+    readline.question('\nDigite um numero maior que 10.000 para verificar (ou sair para encerrar) => ', input => {
+        if(input.toLowerCase() === 'sair') {
+            console.log('Encerrando o programa...');
+            return readline.close();
+        }
+        const num = Number(input);
+
+        if(isNaN(num)) {
+            console.log('Por favor, digite um numero valido!');
+            return verificarNumero();
+        }
+
+        if(num <= 10000) {
+            console.log('O numero deve ser maior que 10000');
+            return verificarNumero();
+        }
+        const primo = isPrimo(num);
+        const congruente = num % 4 === 3;
+
+        console.log('\n===================================================');
+        console.log(`Numero analisado => ${num}`);
+        console.log(`Eh primo? ${primo ? 'Sim' : 'Nao'}`);
+        console.log(`Eh maior que 10.000? ${num > 10000 ? 'Sim' : 'Nao'}`);
+        console.log(`Eh congruente a 3 mod 4 (≡ 3 mod 4)? ${congruente ? 'Sim' : 'Nao'}`);
+
+        if(primo && num > 10000 && congruente) {
+            console.log('\nEste numero PODE ser usado no Blum Blum Shub!');
+            console.log('Atende a todos os requisitos => ');
+            console.log('- Primo');
+            console.log('- > 10.000');
+            console.log('- ≡ 3 mod 4');
+        }
+        else {
+            console.log('\nEste numero NAO pode ser usado no Blum Blum Shub');
+            if(!primo)
+                console.log('- Nao eh primo');
+
+            if(!congruente)
+                console.log('- Nao eh congruente a 3 mod 4');
+        }
+        console.log('===================================================\n');
+
+        verificarNumero(); //Chama recursivamente para nova verificação
+    })
+}
