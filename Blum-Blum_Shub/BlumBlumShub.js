@@ -1,4 +1,5 @@
 const fs = require('fs');
+const { blob } = require('stream/consumers');
 const { RetryAgent } = require('undici-types');
 const { threadId } = require('worker_threads');
 
@@ -109,3 +110,25 @@ class BlumBlumShup
         return bits;
     }
 }
+
+//Parâmetros do algoritmo
+const p = 10007;
+const q = 10039;
+const seed = 101;
+
+//Verificação dos parâmetros
+console.log(`p eh primo e ≡ 3 mod 4? ${isPrimo(p) && p % 4 === 3}`);
+console.log(`q eh primo e ≡ 3 mod 4? ${isPrimo(q) && q % 4 === 3}`);
+console.log(`Semente eh co-primo com n? ${isCoprimo(seed, p * q)}`);
+
+//Criar gerador BBS
+const bbs = new BlumBlumShup(p, q, seed);
+
+//Gerar 1.000.000 de bits para teste NIST
+const bits = bbs.generateBits(1000000);
+
+//Salvar em arquivo para testes NIST
+const bitString = bits.join('');
+fs.writeFileSync('bbs_bits.txt', bitString);
+
+console.log('Sequencia de 1.000.000 bits gerada e salva em bbs_bits.txt');
