@@ -1,5 +1,6 @@
 const fs = require('fs');
 const { RetryAgent } = require('undici-types');
+const { threadId } = require('worker_threads');
 
 //Funções auxiliares
 function gcd(a, b)
@@ -75,4 +76,36 @@ function isPrimo(num, k = 5)
         return false;
     }
     return true;
+}
+
+//Classe Blum Blum Shup
+class BlumBlumShup
+{
+    constructor(p, q, seed) {
+        if(!isPrimo(p) || p % 4 !== 3)
+            throw new Error('p deve ser primo ≡ 3 mod 4');
+
+        if(!isPrimo(q) || q % 4 !== 3)
+            throw new Error('q deve ser primo ≡ 3 mod 4');
+
+        if(!isCoprimo(seed, p * q))
+            throw new Error('A semente deve ser co-primo com n = p * q');
+
+        this.n = p * q;
+        this.state = seed % this.n;
+    }
+
+    nextBit() {
+        this.state = modPow(this.state, 2, this.n);
+        return this.state % 2;
+    }
+
+    generateBits(length) {
+        const bits = [];
+
+        for(let i = 0; i < length; i++)
+            bits.push(this.nextBit());
+
+        return bits;
+    }
 }
