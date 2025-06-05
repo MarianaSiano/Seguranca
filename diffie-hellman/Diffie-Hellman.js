@@ -17,11 +17,30 @@ function fatoresUnicos(num)
     return [...fatores];
 }
 
+//Função de exponenciação modular
+function modPow(base, exponent, modulus)
+{
+    if(modulus === 1)
+        return 0;
+
+    let result = 1;
+    base = base % modulus;
+
+    while(exponent > 0) {
+        if(exponent % 2 === 1)
+            result = (result * base) % modulus;
+
+        exponent = exponent >> 1;
+        base = (base * base) % modulus;
+    }
+    return result;
+}
+
 //Função para encontrar uma raiz primitiva módulo p
 function encontrarRaizPrimitiva(p)
 {
     //Verifica se p é primo
-    if(!isPrime(p)) {
+    if(!isPrimo(p)) {
         throw new Error('p deve ser um número primo');
     }
     const fatores = fatoresUnicos(p - 1);
