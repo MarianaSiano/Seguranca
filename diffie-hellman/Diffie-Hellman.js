@@ -103,3 +103,64 @@ function findPrimitiveRoot(p)
     }
     return null;
 }
+
+//Função para gerar um número primo grande
+function generateLargePrime(bits = 32)
+{
+    let candidato;
+    do {
+        candidato = crypto.randomInt(2 ** (bits - 1), 2 ** bits);
+    } while(!isPrimo(candidato));
+    return candidato;
+}
+
+//Protocolo Diffie-Hellman completo
+function DiffieHellman()
+{
+    //Passo 1: Gerar ou receber um número primo grande p
+    const p = generateLargePrime(2048);
+
+    //Passo 2: Encontrar uma raiz primitiva g modulo p
+    const g = findPrimitiveRoot(p);
+    if(!g) {
+        console.error('Nao foi possivel encontrar uma raiz primitiva para p => ', p);
+        return;
+    }
+    console.log('Parametros publicos');
+    console.log(`p (primo) => ${p}`);
+    console.log(`g (raiz primitiva modulo p) ${g}`);
+
+    //Passo 3: Pessoa X e Pessoa Y escolhem segredos privados
+    const a = crypto.randomInt(2, p - 1); //Segredo da Pessoa X
+    const b = crypto.randomInt(2, p - 1); //Segredo da Pessoa Y
+
+    console.log('Segredos privados:');
+    console.log(`a (da Pessoa X) => ${a}`);
+    console.log(`b (da pessoa Y) => ${b}`);
+
+    //Passo 4: Calcular valores públicos
+    const A = modPow(g, a, p); //Pessoa X envia para a Pessoa Y
+    const B = modPow(g, b, p); //Pessoa Y envia para a Pessoa X
+
+    console.log('Valores trocados publicamente:');
+    console.log(`A (Pessoa X -> Pessoa Y ) => ${A}`);
+    console.log(`B (Pessoa Y -> Pessoa X) => ${B}`);
+
+    //Passo 5: Calcular o segredo compartilhado
+    const s_Pessoa_X = modPow(B, a, p); //Pessoa X calcula o segredo
+    const s_Pessoa_Y = modPow(A, b, p); //Pessoa Y calcula o segredo
+
+    console.log('Segredo compartilhado calculado:');
+    console.log(`s (Pessoa X) => ${s_Pessoa_X}`);
+    console.log(`s (Pessoa Y) => ${s_Pessoa_Y}`);
+
+    //Verificação
+    if(s_Pessoa_X === s_Pessoa_Y)
+        console.log('Segredo compartilhado verificado com sucesso!');
+    else {
+        console.log('Erro no calculo do segredo compartilhado');
+    }
+}
+
+//Executar o protocolo
+DiffieHellman();
