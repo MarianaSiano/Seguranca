@@ -31,25 +31,25 @@ function isPrimo(num, k = 10)
     if(num % 2 === 0 || num % 3 === 0)
         return false;
 
-    let d = n - 1;
+    let d = num - 1;
     let s = 0;
     while(d % 2 === 0) {
         d /= 2;
         s++;
     }
     const bases = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29];
-    for(a  of bases) {
+    for(const a  of bases) {
         if(a >= num)
             continue;
 
         let x = modPow(a, d, num);
-        if(x === 1 || x === n - 1)
+        if(x === 1 || x === num - 1)
             continue;
 
         let composite = true;
         for(let j = 0; j < s - 1; j++) {
-            x = modPow(x, 2, n);
-            if(x === n - 1) {
+            x = modPow(x, 2, num);
+            if(x === num - 1) {
                 composite = false;
                 break;
             }
@@ -75,7 +75,7 @@ function primeFactors(num)
             num /= i;
         }
     }
-    if(n > 2)
+    if(num > 2)
         factors.add(num);
 
     return [...factors];
@@ -105,11 +105,11 @@ function findPrimitiveRoot(p)
 }
 
 //Função para gerar um número primo grande
-function generateLargePrime(bits = 32)
+function generateLargePrime(min, max)
 {
     let candidato;
     do {
-        candidato = crypto.randomInt(2 ** (bits - 1), 2 ** bits);
+        candidato = crypto.randomInt(min, max);
     } while(!isPrimo(candidato));
     return candidato;
 }
@@ -117,8 +117,12 @@ function generateLargePrime(bits = 32)
 //Protocolo Diffie-Hellman completo
 function DiffieHellman()
 {
+    //Definir limites seguros para numeros primos
+    const minimo = 10000;
+    const maximo = 20000;
+
     //Passo 1: Gerar ou receber um número primo grande p
-    const p = generateLargePrime(2048);
+    const p = generateLargePrime(minimo, maximo);
 
     //Passo 2: Encontrar uma raiz primitiva g modulo p
     const g = findPrimitiveRoot(p);
@@ -126,9 +130,9 @@ function DiffieHellman()
         console.error('Nao foi possivel encontrar uma raiz primitiva para p => ', p);
         return;
     }
-    console.log('Parametros publicos');
+    console.log('Parametros publicos:');
     console.log(`p (primo) => ${p}`);
-    console.log(`g (raiz primitiva modulo p) ${g}`);
+    console.log(`g (raiz primitiva modulo p) => ${g}`);
 
     //Passo 3: Pessoa X e Pessoa Y escolhem segredos privados
     const a = crypto.randomInt(2, p - 1); //Segredo da Pessoa X
