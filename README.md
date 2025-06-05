@@ -52,3 +52,8 @@ Siga as intruções neste documento, pois é o mesmo repositorio para todas as a
 * Caso o número seja o programa está pedindo, gerará um arquivo chamado `bits_bbs.txt`. <br>
 
 * Você irá copiar os bits gerados nesse arquivo e irá copiar no site mencionado no arquivo pdf `Blum Blum Shub.pdf` <br>
+
+# Diffie Hellman
+
+* Para rodar o programa, tem que estar na pasta `diffie-hellman`, caso não esteja nela, abra o terminal e digite o seguinte comando: <br>
+`cd diffie-hellman` <br>
