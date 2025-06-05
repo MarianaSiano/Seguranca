@@ -1,5 +1,24 @@
 const crypto = require('crypto');
 
+//Função de exponencialçao modular
+function modPow(base, exp, mod)
+{
+    if(mod === 1)
+        return 0;
+
+    let result = 1;
+    base = base % mod;
+
+    while(exp > 0) {
+        if(exp % 2 === 1)
+            result = (result * base) % mod;
+
+        exp = exp >> 1;
+        base = (base * base) % mod;
+    }
+    return result;
+}
+
 //Função para verificar se um número é primo (Miller-Robin)
 function isPrimo(num, k = 10)
 {
@@ -39,4 +58,25 @@ function isPrimo(num, k = 10)
             return false;
     }
     return true;
+}
+
+//Função para encontrar fatores primos únicos
+function primeFactors(num)
+{
+    const factors = new Set();
+    while(num % 2 === 0) {
+        factors.add(2);
+        num /= 2;
+    }
+
+    for(let i = 3; i <= Math.sqrt(num); i += 2) {
+        while(num % i === 0) {
+            factors.add(i);
+            num /= i;
+        }
+    }
+    if(n > 2)
+        factors.add(num);
+
+    return [...factors];
 }
