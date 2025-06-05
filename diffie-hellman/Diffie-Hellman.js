@@ -80,3 +80,26 @@ function primeFactors(num)
 
     return [...factors];
 }
+
+//Função para encontrar uma raiz primitiva módulo p
+function findPrimitiveRoot(p)
+{
+    if(!isPrimo(p))
+        return null;
+
+    const phi = p - 1;
+    const factors = primeFactors(phi);
+
+    for(let g = 2; g <= p; g++) {
+        let isRoot = true;
+        for(const f of factors) {
+            if(modPow(g, phi / f, p) === 1) {
+                isRoot = false;
+                break;
+            }
+        }
+        if(isRoot)
+            return g;
+    }
+    return null;
+}
