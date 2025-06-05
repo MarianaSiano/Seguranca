@@ -103,3 +103,50 @@ function encontrarRaizPrimitiva(p)
     }
     return null;
 }
+
+//Implementação do Diffie-Hellman
+function DiffieHellman()
+{
+    const p = 23;
+    const g = 5;
+    console.log("Parametros publicos:");
+    console.log(`p (primo) => ${p}`);
+    console.log(`g (raiz primitiva) => ${g}`);
+
+    //Pessoa X escolhe um segredo privado a
+    const a = crypto.randomInt(2, p - 1);
+
+    //Pessoa Y escolhe um segredo privado b
+    const b = crypto.randomInt(2, p - 1);
+    console.log("Segredos privados:");
+    console.log(`a (pessoa X) => ${a}`);
+    console.log(`b (pessoa Y) => ${b}`)
+
+    //Pessoa X calcula A = g ^ a mod p
+    const A = modPow(g, a, p);
+
+    //Pessoa Y calcula B = g ^ b mod p
+    const B = modPow(g, b, p);
+    console.log("Valores calculados e trocados:");
+    console.log(`A (de pessoa X para pessoa Y) => ${A}`);
+    console.log(`B (de pessoa Y para pessoa X) => ${B}`);
+
+    //Pessoa X calcula o segredo compartilhado s = B ^ a mod p
+    const sPessoa_X = modPow(B, a, p);
+
+    //Pessoa Y calcula o segredo compartilhado s = A ^ b mod p
+    const sPessoa_Y = modPow(A, B, p);
+    console.log("Segredo compartilhado:");
+    console.log(`s calculado pela pessoa X => ${sPessoa_X}`);
+    console.log(`s calculado pela pessoa Y => ${sPessoa_Y}`);
+
+    //Verificação
+    if(sPessoa_X === sPessoa_Y) {
+        console.log("O segredo compartilhado foi calculado corretamente por ambas as partes!");
+    } else {
+        console.log("Erro no calculo do segredo compartilhado");
+    }
+}
+
+//Executar o protocolo
+DiffieHellman();
