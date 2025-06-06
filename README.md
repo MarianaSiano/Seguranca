@@ -57,3 +57,8 @@ Siga as intruções neste documento, pois é o mesmo repositorio para todas as a
 
 * Para rodar o programa, tem que estar na pasta `diffie-hellman`, caso não esteja nela, abra o terminal e digite o seguinte comando: <br>
 `cd diffie-hellman` <br>
+
+* Após isso, no terminal, digite o seguinte comando: <br>
+`node Diffie-Hellman.js` <br>
+
+* OBSERVAÇÃO: Você poderá escolher um numero mínimo e máximo para que o programe calcule os números a partir de um número primo, mas, mesmo digitando os mesmos números, nunca resultará nos mesmos números. <br>
