@@ -1,4 +1,8 @@
 const crypto = require('crypto');
+const readline = require('readline').createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
 
 //Função de exponencialçao modular
 function modPow(base, exp, mod)
@@ -115,55 +119,102 @@ function generateLargePrime(min, max)
 }
 
 //Protocolo Diffie-Hellman completo
-function DiffieHellman()
+async function DiffieHellman()
 {
-    //Definir limites seguros para numeros primos
-    const minimo = 10000;
-    const maximo = 20000;
+    console.log('========================================================');
+    console.log('PROTOCOLO DIFFIE-HELLMAN');
+    console.log('========================================================');
 
-    //Passo 1: Gerar ou receber um número primo grande p
+    //Obter o valor minimo do usuario (garantindo que seja maior ou igual a 10.000)
+    let minimo;
+    do {
+        const input = await questionAsync('Digite o valor MÍNIMO para números primos (deve ser maior ou igual a 10000) => ');
+        minimo = parseInt(input);
+        
+        if(isNaN(minimo)) {
+            console.log('Por favor, digite um número válido!');
+        } else if (minimo < 10000) {
+            console.log('O valor mínimo deve ser pelo menos 10000!');
+        }
+    } while(isNaN(minimo) || minimo < 10000);
+
+    //Obter o valor maximo do usuario (deve ser maior que o minimo)
+    let maximo;
+    do {
+        const input = await questionAsync(`Digite o valor MÁXIMO para números primos (deve ser maior que ${minimo}) => `);
+        maximo = parseInt(input);
+        
+        if(isNaN(maximo)) {
+            console.log('Por favor, digite um número válido!');
+        } else if(maximo <= minimo) {
+            console.log(`O valor máximo deve ser maior que ${minimo}!`);
+        }
+    } while(isNaN(maximo) || maximo <= minimo);
+    console.log('\nGerando numeros primos... Isso pode levar alguns segundos...\n');
+
+    //Passo 1: Gerar número primo grande
     const p = generateLargePrime(minimo, maximo);
 
-    //Passo 2: Encontrar uma raiz primitiva g modulo p
+    //Passo 2: Encontrar raiz primitiva g modulo p
     const g = findPrimitiveRoot(p);
     if(!g) {
         console.error('Nao foi possivel encontrar uma raiz primitiva para p => ', p);
+        readline.close();
         return;
     }
-    console.log('Parametros publicos:');
-    console.log(`p (primo) => ${p}`);
+
+    console.log('==================================');
+    console.log('PARAMETROS PUBLICOS');
+    console.log('==================================');
+    console.log(`p (numero primo) => ${p}`);
     console.log(`g (raiz primitiva modulo p) => ${g}`);
 
-    //Passo 3: Pessoa X e Pessoa Y escolhem segredos privados
+    //Passo 3: Gerar segredos privados
     const a = crypto.randomInt(2, p - 1); //Segredo da Pessoa X
     const b = crypto.randomInt(2, p - 1); //Segredo da Pessoa Y
 
-    console.log('Segredos privados:');
-    console.log(`a (da Pessoa X) => ${a}`);
-    console.log(`b (da pessoa Y) => ${b}`);
+    console.log('\n══════════════════════════════════════');
+    console.log('SEGREDOS PRIVADOS:');
+    console.log('══════════════════════════════════════');
+    console.log(`a (Pessoa X) => ${a}`);
+    console.log(`b (Pessoa Y) => ${b}`);
 
     //Passo 4: Calcular valores públicos
-    const A = modPow(g, a, p); //Pessoa X envia para a Pessoa Y
-    const B = modPow(g, b, p); //Pessoa Y envia para a Pessoa X
+    const A = modPow(g, a, p); //Pessoa X -> Pessoa Y
+    const B = modPow(g, b, p); //Pessoa Y -> Pessoa X
 
-    console.log('Valores trocados publicamente:');
-    console.log(`A (Pessoa X -> Pessoa Y ) => ${A}`);
-    console.log(`B (Pessoa Y -> Pessoa X) => ${B}`);
+    console.log('\n══════════════════════════════════════');
+    console.log('VALORES TROCADOS PUBLICAMENTE:');
+    console.log('══════════════════════════════════════');
+    console.log(`A = g ^ a mod p => ${A}`);
+    console.log(`B = g ^ b mod p => ${B}`);
 
-    //Passo 5: Calcular o segredo compartilhado
-    const s_Pessoa_X = modPow(B, a, p); //Pessoa X calcula o segredo
-    const s_Pessoa_Y = modPow(A, b, p); //Pessoa Y calcula o segredo
+    //Passo 5: Calcular segredo compartilhado
+    const sX = modPow(B, a, p); //Pessoa X calcula o segredo
+    const sY = modPow(A, b, p); //Pessoa Y calcula o segredo
 
-    console.log('Segredo compartilhado calculado:');
-    console.log(`s (Pessoa X) => ${s_Pessoa_X}`);
-    console.log(`s (Pessoa Y) => ${s_Pessoa_Y}`);
+    console.log('\n══════════════════════════════════════');
+    console.log('SEGREDO COMPARTILHADO:');
+    console.log('══════════════════════════════════════');
+    console.log(`Segredo calculado por X => ${sX}`);
+    console.log(`Segredo calculado por Y => ${sY}`);
 
     //Verificação
-    if(s_Pessoa_X === s_Pessoa_Y)
-        console.log('Segredo compartilhado verificado com sucesso!');
-    else {
-        console.log('Erro no calculo do segredo compartilhado');
+    if(sX === sY) {
+        console.log('\nSegredo compartilhado identico!');
+    } else {
+        console.log('\nErro: Os segredos não coincidem!');
     }
+
+    readline.close();
+}
+
+//Função auxiliar para usar await com readline.question
+function questionAsync(prompt) 
+{
+    return new Promise(resolve => {
+        readline.question(prompt, resolve);
+    });
 }
 
 //Executar o protocolo
