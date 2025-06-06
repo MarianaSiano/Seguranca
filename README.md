@@ -24,7 +24,6 @@ Siga as intruções neste documento, pois é o mesmo repositorio para todas as a
 
 * Após isso, no terminal, digite o seguinte comando: <br>
 `node CifraCesar.js` <br>
-<br>
 
 * No próprio terminal, terá que digitar a mensagem e a chave que deseja criptografar <br>
 
